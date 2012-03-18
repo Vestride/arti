@@ -1,0 +1,7 @@
+.checkin-needs-id
+  h2.light The checkin page requires an id
+  form(method='post', action='/checkin')
+    div
+      label(for='id') Artifact Id
+      input(id='id', type='text', placeholder='artifact_1234', name='id', required)
+    button.button.button-blue(type='submit') Go to checkin

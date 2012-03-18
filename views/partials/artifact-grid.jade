@@ -1,0 +1,17 @@
+for artifact in locals.artifacts
+    - var classes = (artifact.featured) ? ['grid-item', 'featured'] : ['grid-item'];
+    div(class=classes)
+        a(href='/artifact/' + artifact.id)
+            img(src='/artifacts/' + artifact.id + '.png', height='326', width='220', alt='artifact')
+        .item-details
+            - if (artifact.owner)
+              a.alias(href='/user/' + artifact.owner)= artifact.owner
+            - else
+              span.alias= artifact.id
+            .stats.text-right
+                div
+                    span.icon.icon-eye
+                    | #{artifact.views}
+                div
+                    span.icon.icon-star
+                    | #{artifact.stars}

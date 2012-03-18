@@ -1,0 +1,83 @@
+#fb-root
+script
+    // Like button
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+    
+    // Tweet button
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+    // Plus one button
+    (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+
+- var artifact = locals.artifact;
+section.artifact-details.clearfix
+    input#artifact-id(type='hidden', value=artifact.id)
+    img.artifact(src='/artifacts/' + artifact.id + '.png', height='', width='400', alt='artifact')
+    .details
+        .buttons.rfloat
+            #give-star.button.button-blue.star
+              .star
+            a.button.button-black.button-back(href='/') Gallery
+        
+        section.details-info
+            h2 Artifact:&nbsp;
+                span.alias= id
+            - if (artifact.owner)
+                h4.created-by Created by:&nbsp;
+                  a(href='/user/' + artifact.owner)#{artifact.owner}
+            - if (artifact.featured)
+                .featured-banner.ir Featured
+
+            div
+                span.icon.icon-eye
+                span= artifact.views
+                span.icon.icon-star
+                span= artifact.stars
+
+        section.details-mobile
+            h3 Download for Mobile
+            div
+                a(href='/artifacts/' + artifact.id + '_iphone4.png')
+                    figure
+                        .device.iphone
+                            img.preview.iphone(src='/artifacts/' + artifact.id + '.png', alt='iphone preview')
+                        figcaption iPhone 4
+                a(href='/artifacts/' + artifact.id + '_ipad.png')
+                    figure
+                        .device.ipad
+                            img.preview.ipad(src='/artifacts/' + artifact.id + '.png', alt='ipad preview')
+                        figcaption iPad
+                a(href='/artifacts/' + artifact.id + '_android-large.png')
+                    figure
+                        .device.android
+                            img.preview.android(src='/artifacts/' + artifact.id + '.png', alt='android preview')
+                        figcaption Android
+
+        section.details-desktop
+            h3 Download for Desktop:
+            ul.clearfix
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1920x1200.png', data-ratio='16:10') 1920 x 1200
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1920x1080.png', data-ratio='16:9') 1920 x 1080
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1680x1050.png', data-ratio='16:10') 1680 x 1050
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1600x900.png', data-ratio='16:9') 1600 x 900
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1440x900.png', data-ratio='16:10') 1440 x 900
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1280x1024.png', data-ratio='5:4') 1280 x 1024
+                li: a.button.hover-button(href='/artifacts/' + artifact.id + '_1280x800.png', data-ratio='16:10') 1280 x 800
+
+        section.details-share
+            h3 Share It:
+            ul.ul-inline
+                li: div.g-plusone(data-size='medium', data-href='#{locals.permalink}')
+                li: a.twitter-share-button(href='https://twitter.com/share', data-text='Check out this artifact', data-via='project_ARTI', data-url='#{locals.permalink}') Tweet
+                li: div.fb-like(data-send='false', data-layout='button_count', data-width='90', data-show-faces='false', data-href='#{locals.permalink}')
+

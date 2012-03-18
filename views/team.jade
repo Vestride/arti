@@ -1,0 +1,17 @@
+h1 The Lochness Imposters
+
+section.team-members.clearfix
+    for member in members
+        .member
+            .member-artifact
+                a(href=member.portfolio, target='_blank'): img(src='/img/team/' + member.nice_name + '.jpg', width='220', height='326', alt='Member picture')
+            .member-details
+                h3.member-name= member.name
+                h4.rfloat: a.portfolio-link(href=member.portfolio, target='_blank') Portfolio
+                h4= member.role
+                .member-skills Skills
+                    ul
+                        for skill in member.skills
+                            li= skill
+                p.member-description!= member.description
+                a.member-artifact-link(href='/user/' + member.username) View #{member.name}&rsquo;s artifacts

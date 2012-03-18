@@ -1,0 +1,48 @@
+input#artifact-id(type='hidden', value=locals.artifactId)
+.arti
+  .checkin.rfloat
+    .checkin-details
+      h2.light We just need a few more details.
+      form(method='get', action='/checkin')
+        .owner-name
+          label.dark-text(for='f-name') Username:&nbsp;
+            span.required *
+          input(type='text', id='f-name', required, placeholder='johnDOH', maxlength='15')
+          p.input-description.input-feedback.error.hidden Submitting this will add it to this existing user&rsquo;s collection
+          p.input-description.input-feedback.available.hidden Username unique!
+          p.input-description (This will allow you to find your artifacts later on)
+        .pullquote.dark-text
+          p We can also send your artifact to your <span class="highlight">mobile device</span> right now. Simply answer the following two questions:
+        .owner-email
+          label.dark-text(for='f-email') What&rsquo;s Your Email?
+          input(type='text', id='f-email', placeholder='john.doe@gmail.com')
+          p.input-description.input-feedback.error.hidden Invalid Email Entered
+        .size
+          label.dark-text(for='') Do you have a mobile device with you today?
+          .btn-group.dropdown(data-value='')
+            span.button Select a Device
+            span.button.dropdown-toggle
+              span.caret
+            ul.dropdown-menu
+              li: span(data-value='iphone3g') iPhone 3G
+              li: span(data-value='iphone4') iPhone 4
+              li: span(data-value='ipad') iPad
+              li: span(data-value='android-small') Android Small
+              li: span(data-value='android-medium') Android Medium
+              li: span(data-value='android-large') Android Large
+
+        button.button.button-blue(type='submit') Save Artifact
+        button#save-anonymous.button.button-black(type='button') Save Anonymously
+
+  h2.dark-text Woohoo! Your artifact has been created.
+  canvas#artifact(data-processing-sources='/js/processing/arti/arti.pde /js/processing/arti/particle.pde')
+.unsupported
+  h2.light Your browser does not support the canvas element. You&rsquo;re missing out! Please go download <a href="http://www.google.com/chrome">Google Chrome</a> and come back =)
+.modal.hide.fade
+  .modal-header
+    a.close(data-dismiss='modal') &times;
+    h3 Artifact Saved!
+  .modal-body.dark-text
+    p Your username is:
+  .modal-footer
+    a.button.button-blue(href='#') I&rsquo;ll remember that!

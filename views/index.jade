@@ -1,0 +1,15 @@
+section.filter
+    span.filter-title.main-gradient Filters:
+    ul.ul-inline
+        li.active: a(href='#', data-filter='recent') Recently Added
+        li: a(href='#', data-filter='popular') Popularity
+        li: a(href='#', data-filter='featured') Featured
+        li: a(href='#', data-filter='favorites') Favorites
+
+section.gallery.clearfix
+    .grid.clearfix
+        include partials/artifact-grid.jade
+    - var classes = (locals.total > 8) ? ['no-prev'] : ['no-prev', 'no-next'];
+    nav(class=classes, data-total=locals.total)
+        button.button.button-black.button-back.lfloat Prev
+        button.button.button-blue.button-fwd.rfloat Next

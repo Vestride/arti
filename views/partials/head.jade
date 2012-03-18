@@ -1,0 +1,28 @@
+meta(charset='utf-8')
+meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+
+- var title = (locals.title) ? 'ARTI: ' + locals.title : 'ARTI: Art Rendered Through Identity';
+title= title
+meta(name='description', content='ARTI is an interactive installation that allows visitors to create unique artwork using their body and its movements.')
+meta(name='author', content='/humans.txt')
+meta(property='og:title', content='ARTI: Art Rendered Through Identity')
+meta(property='og:description', content='ARTI is an interactive installation that allows visitors to create unique artwork using their body and its movements.')
+meta(property='og:image', content='http://projectarti.com/apple-touch-icon-114x114-precomposed.png')
+meta(property='og:type', content='website')
+meta(property='og:site_name', content='A.R.T.I.')
+meta(property='fb:admins', content='100003443606687')
+link(href='https://plus.google.com/107693036436931694456', rel='publisher')
+
+link(rel='shortcut icon', href='/favicon.ico', type='image/x-icon')
+link(rel='icon', href='/favicon.ico', type='image/ico')
+link(rel='icon', href='/favicon.png', type='image/png')
+
+meta(name='viewport', content='width=device-width,initial-scale=1, maximum-scale=1.0, user-scalable=no')
+link(rel='apple-touch-icon-precomposed', href='apple-touch-icon-precomposed.png')
+
+- if (locals.videojs)
+  link(rel='stylesheet', href='/css/video-js.css')
+link(rel='stylesheet', href='/css/style.css')
+link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic')
+
+script(src='/js/libs/modernizr-2.5.3.js')

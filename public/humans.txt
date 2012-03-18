@@ -1,0 +1,43 @@
+/* TEAM */
+  Developer: Glen Cheney
+  Site: http://glencheney.com
+  Twitter: @Vestride
+  Location: 
+
+  Developer: Mike Higham
+  Site: http://michaelhigham.com
+  Twitter: @happyearmuffs
+  Location: 
+
+  Developer: Andrew Kiproff
+  Site: http://andrewkiproff.com
+  Twitter: @DroCM
+  Location: 
+
+  Designer: Matt Olpinski
+  Site: http://mattolpinski.com
+  Twitter: @MattOlpinksi
+  Location:
+
+  Designer: Jesse Thoman
+  Site: http://cargocollective.com/JesseThoman
+  Twitter: @everrae
+  Location:
+
+  Designer: Jake Gross
+  Site: http://jakegross.com
+  Twitter: @grossJake
+  Location:
+
+  Designer: Lemmie Lee
+  Site: 
+  Twitter: @OptimisticalLee
+  Location:
+
+/* THANKS */
+  Names (& URL): 
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: Modernizr, jQuery, socket.io
+  Software: node.js, express.js, jade

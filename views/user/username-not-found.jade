@@ -1,0 +1,7 @@
+.username-not-found
+  h2.light &ldquo;#{username}&rdquo; not found!
+  form(method='get', action='/search')
+    div
+      label(for='f-username') Username
+      input(type='text', name='username', placeholder='Search username', id='f-username')
+    button.button.button-blue(type='submit') Try again

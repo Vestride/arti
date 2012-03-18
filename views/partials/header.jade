@@ -1,0 +1,11 @@
+header
+    //canvas#processing-header(data-processing-sources='/js/processing/header/header.pde');
+    .header-inside
+        nav.main-nav.hat
+            .search.rfloat
+                form(action='/search', method='get')
+                    input(type='text', name='username', placeholder='Search Username')
+                    button(type='submit')
+            a.logo(href='/')
+                img(src='/img/logo.png', alt='Logo', width='193', height='58')
+            include main-nav.jade
