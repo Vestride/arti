@@ -266,7 +266,7 @@ p, section {
 }
 
 .main-nav li a {
-    display: inline-block;
+    display: block;
     padding: 6px 15px;
     text-decoration: none;
     color: #FFF;
@@ -304,14 +304,13 @@ p, section {
 }
 
 header .header-inside ul {
-    display: inline-block;
-    vertical-align: middle;
+    margin-top: 35px;
     margin-left: 30px;
+    float: left;
 }
 
 header .logo {
     margin-top: 20px;
-    display: inline-block;
 }
 
 header .search {
@@ -621,8 +620,8 @@ h3.rfloat:before { content: none; }
 \*=============================================*/
 
 .artifact-details .details {
-    width: 520px;
-    margin-left: 20px;
+    width: 380px;
+    margin-left: 40px;
     display: inline-block;
     vertical-align: top;
 }
@@ -634,6 +633,8 @@ h3.rfloat:before { content: none; }
 .artifact-details section:first-of-type {
     margin-top: 0;
 }
+
+.button-replay { margin-top: 15px; }
 
 .details-info h2 {
     color: #323232;
@@ -666,7 +667,7 @@ h3.rfloat:before { content: none; }
 
 .details-mobile a {
     display: inline-block;
-    margin-right: 80px;
+    margin-right: 40px;
 }
 
 .details-mobile a:last-child {

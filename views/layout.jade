@@ -20,18 +20,23 @@ html.no-js(lang='en')
         script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
         script window.jQuery || document.write('<script src="/js/libs/jquery-1.7.1.min.js"><\\/script>')
         
-        script(src='/js/libs/processing-1.3.6.min.js')
-        - if (locals.processingScripts)
-            script(src='/js/arti.js')
-
+        //script(src='/js/libs/processing-1.3.6.min.js')
+        script(src='http://cloud.github.com/downloads/processing-js/processing-js/processing-1.3.6.js')
         script(src='/socket.io/socket.io.js')
         script(defer, src='/js/plugins.js')
         script(defer, src='/js/script.js')
 
+        - if (!locals.JSONartifact) locals.JSONartifact = '{}';
 
         script
             
             $(document).ready(function() {
+                if ('#{locals.processing}' === 'true') {
+                    artifactData = '!{locals.JSONartifact}';
+                    artifactData = JSON.parse(artifactData);
+                    ARTI.processArtifactData();
+                }
+                
                 if ('#{locals.page}' == 'artifact') {
                     ARTI.artifactPage();               
                 } else if ('#{locals.page}' == 'gallery') {

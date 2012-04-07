@@ -15,14 +15,20 @@ module.exports = function(app, fs) {
                 }});
                 return;
             }
-            var permalink = 'http://' + req.headers.host + req.url;
-            var title = artifact.owner ? artifact.owner + '&rsquo;s Artifact - ' + artifact.id : artifact.id;
-            var id = artifact.id.split("_")[1];
+            var permalink = 'http://' + req.headers.host + req.url
+              , title = artifact.owner ? artifact.owner + '&rsquo;s Artifact - ' + artifact.id : artifact.id
+              , id = artifact.id.split("_")[1]
+              , description = 'Check out ' + artifact.owner + '&rsquo;s artifact: ' + artifact.id + ' from A.R.T.I.'
+              , image = 'http://' + req.headers.host + '/artifacts/' + artifact.id + '.png';
             res.render('artifact/artifact', {locals: {
+                processing : true,
+                artifact : artifact,
+                JSONartifact : JSON.stringify(artifact),
                 page : 'artifact',
                 title : title,
+                description : description,
+                image : image,
                 permalink : permalink,
-                artifact : artifact,
                 id : id
             }});
         });
@@ -40,6 +46,7 @@ module.exports = function(app, fs) {
                 res.render('team', {locals : { 
                     page : 'team',
                     title: 'Team Members',
+                    description : 'Meet the team behind A.R.T.I.',
                     members : members
                 }});
             } else {
@@ -52,6 +59,7 @@ module.exports = function(app, fs) {
         res.render('idea', {locals : {
             page : 'idea',
             title : 'The Idea',
+            description: 'An overview and explaintion of A.R.T.I. and the process we went through to build it.',
             videojs : true
         }});
     });
@@ -70,7 +78,8 @@ module.exports = function(app, fs) {
                 res.redirect('/watch/' + artifact.id);
             }
             res.render('artifact/checkin', {locals : { 
-                processingScripts : true,
+                processing : true,
+                JSONartifact : JSON.stringify(artifact),
                 page : 'checkin',
                 title : 'Check-in for ' + artifact.id,
                 artifactId : artifact.id,
@@ -82,23 +91,21 @@ module.exports = function(app, fs) {
     // Got to checkin without an id. Shows form that will redirect to correct page
     app.get('/checkin', function(req, res) {
         res.render('artifact/checkin-needs-id', {locals : {
-            processingScripts : false,
             page : 'checkin'
         }})
     });
     
     // Redirect for /checkin page when given artifact id
     app.post('/checkin', function(req, res) {
-        console.log('redirecting to: /checkin/' + req.body.id)
         res.redirect('/checkin/' + req.body.id);
     });
     
     // Page for watching the artifact be rendered so that no one can save over it
     app.get('/watch/:id', function(req, res){
-        console.log('go to watch for: ' + req.params.id);
         Artifact.getArtifactById(req.params.id, function(err, artifact) {
             res.render('artifact/watch', {locals : { 
-                processingScripts : true,
+                processing : true,
+                JSONartifact : JSON.stringify(artifact),
                 page : 'watch',
                 title : 'Watch ' + artifact.id + ' Generate',
                 artifactId : artifact.id,
@@ -177,6 +184,20 @@ module.exports = function(app, fs) {
            
            res.writeHead(200, {'Content-Type':'image/png'});
            res.end(img, 'binary');
+        });
+    });
+    
+    // Email blast
+    app.get('/blast/:id/:resolution', function(req, res) {
+        Artifact.getArtifactById(req.params.id, function(err, artifact) {
+            res.render('email-blast', {locals : {
+                isWebPage : true,
+                domain : 'http://' + req.headers.host,
+                username: artifact.owner,
+                artifactId: req.params.id,
+                attachment: req.params.resolution,
+                page : 'blast'
+            }})
         });
     });
     

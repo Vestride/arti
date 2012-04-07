@@ -50,11 +50,28 @@ Artifact.prototype.getLegToHead = function() {
 
 
 
-var socket = io.connect(location.protocol + '//' + location.host);
-var ARTI = {
+var socket = io.connect(location.protocol + '//' + location.host)
+  , artifactData
+  , ARTI = {
     
     getArtifactId : function() {
         return document.querySelector('#artifact-id').value;
+    },
+    
+    processArtifactData : function() {
+        /*
+        socket.emit('get_artifact', {'artifactId' : ARTI.getArtifactId()});
+        socket.on('send_artifact', function (data) {
+            console.log(data);
+            artifactData = new Artifact(data);
+            console.log(artifactData);
+            ARTI.readyForProcessing();
+        });
+        */
+        
+        artifactData = new Artifact(artifactData);
+        console.log(artifactData);
+        ARTI.readyForProcessing();
     },
     
     /**
@@ -137,15 +154,23 @@ var ARTI = {
         return document.querySelector("#artifact").toDataURL("image/png");
     },
     
-    readyForProcessing : function() {
-        var processing = Processing.getInstanceById('artifact');
-        if (processing) {
-            processing.ready();
+    getProcessingInstance : function(id, fn) {
+        var instance;
+        id = id || 'artifact';
+        instance = Processing.getInstanceById('artifact')
+        if (instance) {
+            fn(instance);
         } else {
             setTimeout(function(){
-                ARTI.readyForProcessing();
+                ARTI.getProcessingInstance(id, fn);
             }, 200);
         }
+    },
+    
+    readyForProcessing : function() {
+        this.getProcessingInstance('artifact', function(instance) {
+            instance.ready();
+        });
     },
     
     artifactsPerPage : 8,
@@ -224,17 +249,16 @@ var ARTI = {
      */
     updateArtifactNav : function(total) {
         var $nav = $('.gallery nav');
-        $nav.attr('data-total', total).removeClass('no-prev no-next');
+        $nav.attr('data-total', total).removeClass();
         if (ARTI.currentStart == 0) {
             $nav.addClass('no-prev');
         }
-        if (ARTI.currentStop >= total) {
+        if (ARTI.currentStop >= total || ARTI.currentFilter == 'featured') {
             $nav.addClass('no-next');
         }
     },
     
     checkinPage : function() {
-        console.log('rodger rodger');
         $('.size .dropdown .button').dropdown();
         this.initCheckUsername();
         this.initCheckinSubmit();
@@ -315,28 +339,37 @@ var ARTI = {
                         sendEmail : sendEmail,
                         email : emailInput.value,
                         attachment : size
-                    }
+                    };
                 console.log('sending off save request');
                 console.log(request);
                 socket.emit('save_artifact', request);
             }
         });
-        
-        $('#save-anonymous').on('click', function(evt) {
-            // emit socket event
-                var uri = ARTI.getCanvasDataURI()
-                  , artifactId = ARTI.getArtifactId()
-                  , request = {
-                        uri : uri,
-                        artifactId : artifactId, 
-                        username : 'anonymous',
-                        sendEmail : false
-                    }
-                console.log('sending off save request');
-                console.log(request);
-                socket.emit('save_artifact', request);
+
+        // Save button
+        $('#save-artifact').on('click', function(){
+            var uri = ARTI.getCanvasDataURI(),
+                artifactId = ARTI.getArtifactId();
+            socket.emit('save_artifact', {uri : uri, artifactId : artifactId});
         });
         
+        // Save anonymously button
+        $('#save-anonymous').on('click', function(evt) {
+            // emit socket event
+            var uri = ARTI.getCanvasDataURI(),
+                artifactId = ARTI.getArtifactId(),
+                request = {
+                    uri : uri,
+                    artifactId : artifactId, 
+                    username : 'anonymous',
+                    sendEmail : false
+                };
+            console.log('sending off save request');
+            console.log(request);
+            socket.emit('save_artifact', request);
+        });
+        
+        // On saved response
         socket.on('artifact_saved', function(response){
             console.log(response);
             $('.modal-body p').html('Your username is: <span class="highlight">' + response.username + '</span>');
@@ -356,7 +389,13 @@ var ARTI = {
         ARTI.updateStarButton();
         $('#give-star').on('click', function() {
             ARTI.star();
-        })
+        });
+        
+        $('.js-replay').on('click', function() {
+            ARTI.getProcessingInstance('artifact', function(instance) {
+                instance.replay();
+            });
+        });
     },
     
     tooltips : [
@@ -381,13 +420,11 @@ var ARTI = {
     },
     
     isInView : function (elem, completelyVisible) {
-        var docViewTop = $(window).scrollTop();
-        var docViewBottom = docViewTop + $(window).height();
-
-        var elemTop = $(elem).offset().top;
-        var elemBottom = elemTop + $(elem).height();
-        
-        var isInView;
+        var docViewTop = $(window).scrollTop(),
+            docViewBottom = docViewTop + $(window).height(),
+            elemTop = $(elem).offset().top,
+            elemBottom = elemTop + $(elem).height(),
+            isInView;
         
         if (completelyVisible) {
             isInView = ((elemBottom >= docViewTop) && (elemTop <= docViewBottom)

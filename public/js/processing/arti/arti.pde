@@ -29,13 +29,25 @@ void ready() {
   
   //console.log("Z: " + Z + ", K: " + K + ", depth: " + depth);
   artsakh = new color[5];
-artsakh[0] = color(216, 52, 17);//darkest
-artsakh[1] = color(190, 38, 25, .5);
-artsakh[2] = color(87, 32, 54, .5);
-artsakh[3] = color(151, 28, 36, 1);//base
-artsakh[4] = color(52, 50, 80, .5);//lightest
+  artsakh[0] = color(216, 52, 17);//darkest
+  artsakh[1] = color(190, 38, 25, .5);
+  artsakh[2] = color(87, 32, 54, .5);
+  artsakh[3] = color(151, 28, 36, 1);//base
+  artsakh[4] = color(52, 50, 80, .5);//lightest
 
+sandy = new color[5];
+sandy[0] = color(163, 11, 87);
+sandy[1] = color(193, 33, 85, .5);
+sandy[2] = color(36, 37, 95, .5);
+sandy[3] = color(16, 56, 85, 1);
+sandy[4] = color(12, 72, 92, .5);
 
+royalwe = new color[5];
+royalwe[0] = color(22, 62, 91);
+royalwe[1] = color(11, 63, 83, .5);
+royalwe[2] = color(6, 65, 74, .5);
+royalwe[3] = color(348, 60, 61, 1);
+royalwe[4] = color(312, 58, 44, .5);
   frameRate(25);
   
   numMoves = ceil(abs(artifactData.bbox/10));
@@ -76,6 +88,12 @@ artsakh[4] = color(52, 50, 80, .5);//lightest
   loop();
 }
 
+void replay() {
+  background(0);
+  iterations = 300;
+  ready();
+}
+
 void draw() {
   //println("drawing");
   if (artifactData == null) {
@@ -109,27 +127,27 @@ void render(){
     
     //console.log(iterations+ ">"+ceil(400/numMoves));
     if (iterations%numMoves < 5) {
-       console.log("less than 5");
+       //console.log("less than 5");
        Z[i].gravitate( new particle( artifactData.rhandX, artifactData.rhandY, depth/2, 0, 0, 0, 0.75 ) );
        K[i].gravitate( new particle( width-artifactData.rhandX, artifactData.rhandY, depth/2, 0, 0, 0, 0.75 ) );
        Q[i].gravitate( new particle( artifactData.lhandX, artifactData.lhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
        V[i].gravitate( new particle( width-artifactData.lhandX, artifactData.lhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
     }else if (iterations%numMoves < 15) {
-       console.log("less than 15");
-       Z[i].gravitate( new particle( artifactData.lhandX, artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
-       K[i].gravitate( new particle( width-artifactData.lhandX, artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
+       //console.log("less than 15");
+       Z[i].gravitate( new particle( tan(artifactData.lhandX), artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
+       K[i].gravitate( new particle( width-tan(artifactData.lhandX), artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
        Q[i].gravitate( new particle( artifactData.rhandX, artifactData.rhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
        V[i].gravitate( new particle( width-artifactData.rhandX, artifactData.rhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
     }else if(iterations%numMoves < 35){
-       console.log("less than 35");
-       Z[i].repel( new particle( artifactData.lhandX, artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
-       K[i].repel( new particle( width-artifactData.lhandX, artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
+       //console.log("less than 35");
+       Z[i].repel( new particle( cos(artifactData.lhandX), artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
+       K[i].repel( new particle( width-cos(artifactData.lhandX), artifactData.lhandY, depth/2, 0, 0, 0, 0.75 ) );
        Q[i].repel( new particle( artifactData.rhandX, artifactData.rhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
        V[i].repel( new particle( width-artifactData.rhandX, artifactData.rhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
     }else if(iterations%numMoves < 60){
-      console.log("less than 60");
-      Z[i].gravitate( new particle(artifactData.head, artifactData.height, depth/2, 0, 0, 0, 0.75 ) );
-       K[i].gravitate( new particle( width-(artifactData.head), artifactData.height, depth/2, 0, 0, 0, 0.75 ) );
+      //console.log("less than 60");
+      Z[i].gravitate( new particle(sin(artifactData.head), artifactData.height, depth/2, 0, 0, 0, 0.75 ) );
+       K[i].gravitate( new particle( width-sin(artifactData.head), artifactData.height, depth/2, 0, 0, 0, 0.75 ) );
        Q[i].gravitate( new particle( artifactData.rhandX, artifactData.rhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
        V[i].gravitate( new particle( width-artifactData.rhandX, artifactData.rhandY+artifactData.torso, depth/2, 0, 0, 0, 0.75 ) );
     }
@@ -150,13 +168,13 @@ void render(){
     //stroke(40);
    //colorMode(HSB,1);
   
-   stroke(artsakh[0]);
+   fill(royalwe[0]);
     Z[i].display();
-   stroke(artsakh[1]);
+   fill(royalwe[1]);
     K[i].display();
-   stroke(artsakh[2]);
+   fill(royalwe[2]);
     Q[i].display();
-   stroke(artsakh[3]);
+   fill(royalwe[3]);
     V[i].display();
 
     r = float(i)/Z.length;
@@ -169,10 +187,9 @@ void render(){
 //    }
       //stroke(40);
       if(i != Z.length - 1){
-//        line(Z[i].x, Z[i].y, Z[i+1].x, Z[i+1].y);
-//        line(K[i].x, K[i].y, K[i+1].x, K[i+1].y);
-//        line(Q[i].x, Z[i].y, Z[i+1].x, Z[i+1].y);
-//        line(V[i].x, K[i].y, K[i+1].x, K[i+1].y);
+        //stroke(255);
+           line(Z[i].x, Z[i].y, Z[i+1].x, Z[i+1].y);
+           line(K[i].x, K[i].y, K[i+1].x, K[i+1].y);
       }
   }
 }

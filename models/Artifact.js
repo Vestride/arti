@@ -109,19 +109,19 @@ var Artifact = {
     },
     
     getRecentArtifacts : function(start, stop, fn) {
-        return this.getArtifacts(start, stop, 'recent', fn);
+        this.getArtifacts(start, stop, 'recent', fn);
     },
     
     getPopularArtifacts : function(start, stop, fn) {
-        return this.getArtifacts(start, stop, 'popular', fn);
+        this.getArtifacts(start, stop, 'popular', fn);
     },
     
     getFavoriteArtifacts : function(start, stop, fn) {
-        return this.getArtifacts(start, stop, 'favorites', fn);
+        this.getArtifacts(start, stop, 'favorites', fn);
     },
     
     getArtifactsByUser : function(username, fn) {
-        Artifact.getArtifacts(null, null, 'user', fn, username);
+        this.getArtifacts(null, null, 'user', fn, username);
     },
     
     /**
@@ -181,33 +181,8 @@ var Artifact = {
         this.saveAllAttachmentSizes(buf, artifactId, request.attachment, function(err, res) {
             // Send them an email if they requested it
             if (request.sendEmail) {
-                var html = utils.getEmailHtml(),
-                filename = __dirname + '/../public/artifacts/' + request.artifactId + '_' + request.attachment + '.png',
-                image = fs.readFileSync(filename),
-                message = {
-                    transport: transport,
-                    from: 'A.R.T.I. <proj.arti@gmail.com>',
-                    to: request.username + ' <' + request.email + '>',
-                    subject: 'Your Artifact from A.R.T.I.',
-                    html: html,
-                    attachments:[
-                        {
-                            fileName: request.username + ' artifact.png',
-                            contents: image
-                        }
-                    ]
-                };
-
-                console.log('Sending mail to ' + request.email);
-                nodemailer.sendMail(message, function(error){
-                    if (error) {
-                        console.log('Error occured');
-                        console.log(error.message);
-                        return;
-                    }
-                    console.log('Message sent successfully!');
-                    transport.close(); // close the connection pool
-                    fn(err, response);
+                utils.sendMail(request, function() {
+                    fn(err, res);
                 });
             }
         });

@@ -1,0 +1,32 @@
+table(style='text-align: center; width: 100%; border-collapse: separate;font-family: \'Lato\', sans-serif; font-size:20px;')
+  - if (!locals.isWebPage)
+    thead(style='background-color: white;')
+      tr
+        th
+          a(href=locals.domain + '/blast/' + locals.artifactId + '/' + locals.attachment, title='View this as a webpage', style='display:block;background: #333;text-shadow: none;color: white; font-weight: normal;margin: 0 auto 20px;font-size: 16px;padding: 10px; width: 548px; text-decoration: none;') View this as a webpage
+  
+  - var style = locals.isWebPage ? '' : 'background-color: white; color: black;';
+  tbody(style=style)
+    tr
+      td
+        img(src=locals.domain + '/img/ribbon-congrats.png', alt='Congratulations! You have created an artifact!', width='548', height='54')
+    tr
+      td
+        p
+          i Identity by&nbsp;
+            a(href=locals.domain + '/user/' + locals.username, style='color:#4ba5cc')= locals.username
+    tr
+      td
+        img(src=locals.domain + '/artifacts/' + locals.artifactId + '_' + locals.attachment + '.png', alt='artifact', height='400', style='border: 5px solid white; box-shadow: 0 0 10px 0px rgba(0, 0, 0, .5);')
+    tr
+      td
+        p
+          i Doesn't that look just like you?
+    tr
+      td
+        a(href=locals.domain + '/artifacts/' + locals.artifactId + '_' + locals.attachment + '.png', title='Download now!!', target='_blank', style='display:block; margin-bottom: 10px;')
+          img(src=locals.domain + '/img/ribbon-download-now.png', alt='Download now!', width='378', height='51')
+    tr
+      td
+        a(href=locals.domain + '/artifact/' + locals.artifactId, title='See it on projectarti.com', target='_blank', style='display:block; margin: 0 auto 20px;')
+          img(src=locals.domain + '/img/ribbon-project-arti.png', alt='See it on projectarti.com', width='378', height='51')

@@ -2,12 +2,14 @@ meta(charset='utf-8')
 meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
 
 - var title = (locals.title) ? 'ARTI: ' + locals.title : 'ARTI: Art Rendered Through Identity';
+- var description = (locals.description) ? locals.description : 'ARTI is an interactive installation that allows visitors to create unique artwork using their body and its movements.';
+- var image = (locals.image) ? locals.image : 'http://projectarti.com/apple-touch-icon-114x114-precomposed.png';
 title= title
-meta(name='description', content='ARTI is an interactive installation that allows visitors to create unique artwork using their body and its movements.')
+meta(name='description', content=description)
 meta(name='author', content='/humans.txt')
-meta(property='og:title', content='ARTI: Art Rendered Through Identity')
-meta(property='og:description', content='ARTI is an interactive installation that allows visitors to create unique artwork using their body and its movements.')
-meta(property='og:image', content='http://projectarti.com/apple-touch-icon-114x114-precomposed.png')
+meta(property='og:title', content=title)
+meta(property='og:description', content=description)
+meta(property='og:image', content=image)
 meta(property='og:type', content='website')
 meta(property='og:site_name', content='A.R.T.I.')
 meta(property='fb:admins', content='100003443606687')

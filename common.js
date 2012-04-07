@@ -1,5 +1,5 @@
-var redis = require('redis'),
-    nodemailer = require('nodemailer');
+var redis = require('redis')
+  , nodemailer = require('nodemailer');
     
 exports.redis = redis.createClient();
 exports.transport = nodemailer.createTransport('SMTP', {
@@ -10,3 +10,4 @@ exports.transport = nodemailer.createTransport('SMTP', {
     }
 });
 console.log('SMTP configured');
+exports.baseUrl = 'http://projectarti.com';

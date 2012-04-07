@@ -22,12 +22,15 @@ script
 - var artifact = locals.artifact;
 section.artifact-details.clearfix
     input#artifact-id(type='hidden', value=artifact.id)
-    img.artifact(src='/artifacts/' + artifact.id + '.png', height='', width='400', alt='artifact')
+    //img.artifact(src='/artifacts/' + artifact.id + '.png', height='', width='400', alt='artifact')
+    canvas#artifact(data-processing-sources='/js/processing/arti/arti.pde /js/processing/arti/particle.pde')
     .details
         .buttons.rfloat
             #give-star.button.button-blue.star
               .star
             a.button.button-black.button-back(href='/') Gallery
+            br
+            button.button.button-blue.js-replay.button-replay.rfloat Replay
         
         section.details-info
             h2 Artifact:&nbsp;

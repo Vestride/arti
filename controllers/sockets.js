@@ -34,25 +34,22 @@ module.exports = function(io) {
                         html = jadeFn({locals : {
                             artifacts: artifacts
                         }});
-                        socket.emit('got_more_artifacts', { html: html, total: total});
+                        socket.emit('got_more_artifacts', {html: html, total: total});
                         console.log('sending back ' + artifacts.length + ' artifacts.');
                     });
                 });
             });
         });
 
-        //console.log(socket);
+        // Sends an artifact
         socket.on('get_artifact', function(data) {
             console.log("Request for new artifact with id: " + data.artifactId);
             Artifact.getArtifactById(data.artifactId, function(err, artifact) {
                 socket.emit('send_artifact', artifact);
             });
         });
-        socket.on('new_artifact', function(data) {
-            console.log("Request for new artifact with id: " + data.artifactId);
-        });
 
-
+        // Save artifact and images that go with it. Also sends email with artifact attachment.
         socket.on('save_artifact', function(data) {
             Artifact.save(data, function(err) {
                 if (!err) socket.emit('artifact_saved', {username: data.username});
@@ -60,11 +57,21 @@ module.exports = function(io) {
             });
         });
         
+        // Checks to see if a given user exists
         socket.on('user_exists', function(data) {
            console.log('checking to see if ' + data.username + ' is taken...');
            User.exists(data.username, function(err, exists) {
                if (err) console.log(err);
                socket.emit('user_exists', {exists : exists});
+           });
+        });
+        
+        // Test mailing
+        socket.on('test_mail', function(data) {
+           console.log('testing mailing capabilities');
+           console.log(data);
+           utils.sendMail(data, function(err, res) {
+               socket.emit('test_mail_sent', {response : res});
            });
         });
     });
