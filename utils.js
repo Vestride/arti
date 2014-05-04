@@ -101,5 +101,17 @@ module.exports = {
             }});
             fn(error, html);
         });
+    },
+
+    renderJadePartial : function(templatePath, locals, fn) {
+      var jadeFn,
+          html;
+      templatePath = __dirname + '/' + templatePath;
+      fs.readFile(templatePath, function(error, template) {
+          if (error) console.log(error);
+          jadeFn = jade.compile(template, {filename: templatePath});
+          html = jadeFn(locals);
+          fn(error, html);
+      });
     }
 };

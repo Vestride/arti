@@ -19,18 +19,26 @@ module.exports = function(app, fs) {
               , title = artifact.owner ? artifact.owner + '&rsquo;s Artifact - ' + artifact.id : artifact.id
               , id = artifact.id.split("_")[1]
               , description = 'Check out ' + artifact.owner + '&rsquo;s artifact: ' + artifact.id + ' from A.R.T.I.'
-              , image = 'http://' + req.headers.host + '/artifacts/' + artifact.id + '.png';
-            res.render('artifact/artifact', {locals: {
-                processing : true,
-                artifact : artifact,
-                JSONartifact : JSON.stringify(artifact),
-                page : 'artifact',
-                title : title,
-                description : description,
-                image : image,
-                permalink : permalink,
-                id : id
-            }});
+              , image = 'http://' + req.headers.host + '/artifacts/' + artifact.id + '.png'
+              , locals = {
+                    processing : true,
+                    artifact : artifact,
+                    JSONartifact : JSON.stringify(artifact),
+                    page : 'artifact',
+                    title : title,
+                    description : description,
+                    image : image,
+                    permalink : permalink,
+                    id : id
+              };
+
+            if (req.xhr) {
+                utils.renderJadePartial('views/artifact/artifact.jade', locals, function(err, html) {
+                    res.json({html: html, data: locals});
+                });
+            } else {
+                res.render('artifact/artifact', {locals: locals});
+            }
         });
     });
 
@@ -39,29 +47,46 @@ module.exports = function(app, fs) {
     app.get('/team', function(req, res) {
         fs.readFile('./models/team-members.json', function(error, content) {
             if (!error) {
-                var members = JSON.parse(content);
+                var members = JSON.parse(content),
+                    locals;
                 
                 // Randomize the order of the imposters every time.
                 members = members.sort(function() {return 0.5 - Math.random();});
-                res.render('team', {locals : { 
+                locals = { 
                     page : 'team',
                     title: 'Team Members',
                     description : 'Meet the team behind A.R.T.I.',
                     members : members
-                }});
+                };
+
+                if (req.xhr) {
+                    utils.renderJadePartial('views/team.jade', locals, function(err, html) {
+                        res.json({html: html, data: locals});
+                    });
+                } else {
+                    res.render('team', {locals : locals});
+                }
             } else {
                 throw new Error('Error reading team-members.json');
             }
         });
     });
     
-    app.get('/idea', function(req, res){
-        res.render('idea', {locals : {
+    app.get('/idea', function(req, res) {
+        var locals = {
             page : 'idea',
             title : 'The Idea',
             description: 'An overview and explaintion of A.R.T.I. and the process we went through to build it.',
             videojs : true
-        }});
+        };
+        
+        if (req.xhr) {
+            utils.renderJadePartial('views/idea.jade', locals, function(err, html) {
+                res.json({html: html, data: locals});
+            });
+        } else {
+            res.render('idea', {locals : locals});
+        }
     });
     
     // url for the checkin. Id is the id of the artifact
@@ -75,7 +100,7 @@ module.exports = function(app, fs) {
             }
             if (artifact.processed) {
                 console.log('Artifact already processed, nexted!');
-                res.redirect('/watch/' + artifact.id);
+                //res.redirect('/watch/' + artifact.id);
             }
             res.render('artifact/checkin', {locals : { 
                 processing : true,
@@ -90,9 +115,10 @@ module.exports = function(app, fs) {
     
     // Got to checkin without an id. Shows form that will redirect to correct page
     app.get('/checkin', function(req, res) {
-        res.render('artifact/checkin-needs-id', {locals : {
-            page : 'checkin'
-        }})
+        res.render('artifact/checkin', {locals : {
+            page : 'checkin',
+            processing : true,
+        }});
     });
     
     // Redirect for /checkin page when given artifact id
@@ -127,12 +153,20 @@ module.exports = function(app, fs) {
         User.exists(username, function(err, exists){
             if (exists) {
                 Artifact.getArtifactsByUser(username, function(err, artifacts) {
-                    res.render('user/user', {locals : {
+                    var locals = {
                         page : 'user',
                         title : username,
                         artifacts : artifacts,
                         username: username
-                    }});
+                    };
+
+                    if (req.xhr) {
+                        utils.renderJadePartial('views/user/user.jade', locals, function(err, html) {
+                            res.json({html: html, data: locals});
+                        });
+                    } else {
+                        res.render('user/user', {locals : locals });
+                    }
                 });
             } else {
                 res.render('user/username-not-found', {locals : {
@@ -202,14 +236,21 @@ module.exports = function(app, fs) {
     });
     
     // Default request aka home page. This is the gallery.
-    app.get('/', function(req, res){
+    app.get('/', function(req, res) {
         Artifact.getRecentArtifacts(0, 7, function(err, artifacts) {
             Artifact.getTotalArtifacts('recent', function(err, total) {
-                res.render('index', {locals : { 
+                var locals = {
                     page : 'gallery',
                     artifacts : artifacts,
                     total : total
-                }});
+                };
+                if (req.xhr) {
+                    utils.renderJadePartial('views/index.jade', locals, function(err, html) {
+                        res.json({html: html, data: locals});
+                    });
+                } else {
+                    res.render('index', {locals : locals});
+                }
             });
         });
     });

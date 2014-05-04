@@ -37,7 +37,7 @@
         "skills" : ["Illustration", "Motion Graphics", "Writing"],
         "description" : "A designer, illustrator, and writer, with a love for all things film. I have a marketer&rsquo;s mind-set and am always thinking of how projects and products will interact with people.",
         "username" : "everrae",
-        "portfolio" : "http://cargocollective.com/JesseThoman"
+        "portfolio" : "http://jessethoman.com"
     },
     {
         "name" : "Jake Gross",
@@ -58,15 +58,5 @@
         "description" : "I&rsquo;m a multi-talented interface designer with a passion for motion graphics and web design. I have a confident personality and a creative mind that allow me to produce top-notch work. I love the details that make good projects great.",
         "username" : "mattolpinski",
         "portfolio" : "http://mattolpinski.com/"
-    },
-    {
-        "name" : "Lemmie Lee",
-        "nice_name" : "lemmie_lee",
-        "imposter_name" : "Asian Imposter",
-        "role" : "Designer",
-        "skills" : ["Illustration", "Interface Design", "Logistics"],
-        "description" : "2D designer with the drive of a leader. My passion is to create a difference in my community while making it look as awesome as possible. Doing good should look cool.",
-        "username" : "lee",
-        "portfolio" : "http://passionarmorsme.com"
     }
 ]

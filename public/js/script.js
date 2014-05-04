@@ -53,25 +53,54 @@ Artifact.prototype.getLegToHead = function() {
 var socket = io.connect(location.protocol + '//' + location.host)
   , artifactData
   , ARTI = {
+
+    defaultTitle : 'ARTI: Art Rendered Through Identity',
+    defaultDescription : 'ARTI is an interactive installation that allows visitors to create unique artwork using their body and its movements.',
+    defaultImage : document.location.protocol + '//' + (document.location.hostname || document.location.host) + '/apple-touch-icon-114x114-precomposed.png',
+    processingSources : ['/js/processing/arti/arti.pde', '/js/processing/arti/Layer.pde', '/js/processing/arti/Palette.pde', '/js/processing/arti/Utils.pde'],
+    processingCanvasId : 'artifact',
+
+    init : function(page, processing) {
+        if (processing === 'true' || processing === true) {
+            artifactData = JSON.parse(artifactData);
+            ARTI.processArtifactData(page == 'checkin', processing === true);
+        }
+        
+        if (page == 'artifact') {
+            ARTI.artifactPage();               
+        } else if (page == 'gallery') {
+            ARTI.galleryPage();
+        } else if (page == 'checkin') {
+            ARTI.checkinPage();
+        }
+    },
     
     getArtifactId : function() {
         return document.querySelector('#artifact-id').value;
     },
+
+    /**
+     * Sets the id for the artifact id input
+     * 
+     * @param {string} id id to set
+     */
+    setArtifactId : function(id) {
+        document.querySelector('#artifact-id').value = id;
+    },
     
-    processArtifactData : function() {
-        /*
-        socket.emit('get_artifact', {'artifactId' : ARTI.getArtifactId()});
-        socket.on('send_artifact', function (data) {
-            console.log(data);
-            artifactData = new Artifact(data);
-            console.log(artifactData);
-            ARTI.readyForProcessing();
-        });
-        */
-        
+    processArtifactData : function(isCheckin, isAjax) {        
         artifactData = new Artifact(artifactData);
         console.log(artifactData);
-        ARTI.readyForProcessing();
+        if (!isCheckin) {
+            $.ajax({ url: '/js/libs/processing-1.3.6.min.js', dataType: 'script', cache:true}).done(function() {
+                try {
+                    Processing.loadSketchFromSources('artifact', ARTI.processingSources);
+                    ARTI.readyForProcessing();
+                } catch (e) {
+                    console.warn(e);
+                }
+            });
+        }
     },
     
     /**
@@ -156,8 +185,8 @@ var socket = io.connect(location.protocol + '//' + location.host)
     
     getProcessingInstance : function(id, fn) {
         var instance;
-        id = id || 'artifact';
-        instance = Processing.getInstanceById('artifact')
+        id = id || ARTI.processingCanvasId;
+        instance = Processing.getInstanceById(id);
         if (instance) {
             fn(instance);
         } else {
@@ -168,11 +197,23 @@ var socket = io.connect(location.protocol + '//' + location.host)
     },
     
     readyForProcessing : function() {
-        this.getProcessingInstance('artifact', function(instance) {
+        this.getProcessingInstance(ARTI.processingCanvasId, function(instance) {
             instance.ready();
         });
     },
+
+    pauseProcessing : function() {
+        this.getProcessingInstance(ARTI.processingCanvasId, function(instance) {
+            instance.noLoop();
+        });
+    },
     
+    replayProcessing : function() {
+        this.getProcessingInstance(ARTI.processingCanvasId, function(instance) {
+            instance.replay();
+        });
+    },
+
     artifactsPerPage : 8,
     currentFilter : 'recent',
     currentStart : 0,
@@ -259,9 +300,9 @@ var socket = io.connect(location.protocol + '//' + location.host)
     },
     
     checkinPage : function() {
-        $('.size .dropdown .button').dropdown();
         this.initCheckUsername();
         this.initCheckinSubmit();
+        this.initCheckinEvents();
     },
     
     initCheckUsername : function() {
@@ -286,15 +327,10 @@ var socket = io.connect(location.protocol + '//' + location.host)
                 $('.owner-name .available').removeClass('hidden');
             }
         });
-        
-        $('.modal .modal-footer .button').on('click', function(evt) {
-            evt.preventDefault();
-            $('.modal').modal('hide');
-            window.location = '/artifact/' + ARTI.getArtifactId(); 
-        });
     },
     
     initCheckinSubmit : function() {
+        $('.size .dropdown .button').dropdown();
         $('.checkin form').on('submit', function(evt){
             evt.preventDefault();
             var ok = true
@@ -368,18 +404,59 @@ var socket = io.connect(location.protocol + '//' + location.host)
             console.log(request);
             socket.emit('save_artifact', request);
         });
-        
-        // On saved response
-        socket.on('artifact_saved', function(response){
-            console.log(response);
-            $('.modal-body p').html('Your username is: <span class="highlight">' + response.username + '</span>');
-            $('.modal').modal();
+    },
+    
+    initCheckinEvents : function() {
+
+        // Private function to resets our form data.
+        var resetForm = function() {
             document.querySelector('.checkin form').reset();
             $('.checkin .dropdown').attr('data-value', '').children().first().text('Select a Device');
             $('form .available, form .error').addClass('hidden');
+        };
+
+        // On saved response
+        socket.on('artifact_saved', function(response){
+            console.log(response);
+            $('.saved-modal .modal-body p').html('Your username is: <span class="highlight">' + response.username + '</span>');
+            $('.saved-modal').modal();
+            resetForm();
+        });
+        
+        // Save button ok click
+        $('.saved-modal .modal-footer .button').on('click', function(evt) {
+            evt.preventDefault();
+            $('.saved-modal').modal('hide');
+        });
+
+        // New data ok click
+        $('.new-data-modal .modal-footer .button').on('click', function(evt) {
+            evt.preventDefault();
+            $('.new-data-modal').modal('hide');
+            ARTI.replayProcessing();
+        });
+
+        // Some new data stored in the database
+        socket.on('new_data_stored', function(response) {
+            socket.emit('get_artifact', {artifactId: response.id});
+        });
+
+        // Got new data from a new person. Reset things.
+        socket.on('send_artifact', function (data) {
+            console.log(data);
+
+            // Set up our new data
+            artifactData = new Artifact(data);
+            ARTI.setArtifactId(artifactData.id);
+
+            resetForm();
+
+            $('.new-data-modal').modal();
+
+            ARTI.pauseProcessing();
         });
     },
-    
+
     /**
      * Code to run when the artifact page is ready
      * Increments views, adds on click for star button, and updates the star button
@@ -392,9 +469,7 @@ var socket = io.connect(location.protocol + '//' + location.host)
         });
         
         $('.js-replay').on('click', function() {
-            ARTI.getProcessingInstance('artifact', function(instance) {
-                instance.replay();
-            });
+            ARTI.replayProcessing();
         });
     },
     
@@ -434,21 +509,67 @@ var socket = io.connect(location.protocol + '//' + location.host)
         }
         
         return isInView;
+    },
+
+    update : function(evt, data) {
+        var title = data.title ? data.title : ARTI.defaultTitle,
+            description = data.description ? data.description : ARTI.defaultDescription,
+            image = data.image ? data.image : ARTI.defaultImage;
+
+        // Update the nav
+        $('.main-nav .active').removeClass('active');
+        $('.main-nav [data-page="' + data.page + '"]').addClass('active');
+
+        // Update meta tags
+        $('head title').html(title);
+        $('head meta[property="og:title"]').attr('content', title);
+        $('head meta[name="description"], head meta[property="og:description"]').attr('content', description);
+        $('head meta[property="og:image"]').attr('content', image);
+
+        if (data.processing) {
+            artifactData = data.JSONartifact;
+            try {
+                FB.XFBML.parse(); 
+            } catch(ex) {/* unable to parse facebook elements */}
+            try {
+                twttr.widgets.load();
+            } catch (e) { /* twttr undefined/not loaded*/}
+        }
+
+        // Initialize anything we need to
+        ARTI.init(data.page, data.processing);
+        $('#main').stop(true, true).fadeIn();
+    },
+
+    contentRequest : function(evt) {
+        $('#main').stop(true, true).fadeOut();
+    },
+
+    contentLoaded : function(evt) {
+        
     }
 };
 
 
 (function() {
-    
-    // Give IE 8 the indexOf function
-    if(!Array.prototype.indexOf) {
-        Array.prototype.indexOf = function(needle) {
-            for(var i = 0; i < this.length; i++) {
-                if(this[i] === needle) {
-                    return i;
+    Processing.disableInit();
+
+    $(document).ready(function() {
+        // Give IE 8 the indexOf function
+        if(!Array.prototype.indexOf) {
+            Array.prototype.indexOf = function(needle) {
+                for(var i = 0; i < this.length; i++) {
+                    if(this[i] === needle) {
+                        return i;
+                    }
                 }
-            }
-            return -1;
-        };
-    }
+                return -1;
+            };
+        }
+        
+        $('body').histify()
+            .on('request.histify', ARTI.contentRequest)
+            .on('loaded.histify', ARTI.contentLoaded)
+            .on('replaced.histify', ARTI.update);
+    });
 })();

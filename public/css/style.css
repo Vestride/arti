@@ -1458,6 +1458,7 @@ a.button:hover {
     color: #323232;
     text-align: center;
     font-weight: 700;
+    z-index: 1;
 }
 .modal-header h3:before {
     content: none;
@@ -1493,6 +1494,7 @@ a.button:hover {
     margin-top: 2px;
     cursor: pointer;
     z-index: 2;
+    position: relative;
 }
 .close {
     float: right;

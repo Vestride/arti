@@ -35,10 +35,10 @@ input#artifact-id(type='hidden', value=locals.artifactId)
         button#save-anonymous.button.button-black(type='button') Save Anonymously
 
   h2.dark-text Woohoo! Your artifact has been created.
-  canvas#artifact(data-processing-sources='/js/processing/arti/arti.pde /js/processing/arti/particle.pde')
+  canvas#artifact(data-processing-sources='/js/processing/arti/arti.pde /js/processing/arti/Layer.pde /js/processing/arti/Palette.pde /js/processing/arti/Utils.pde')
 .unsupported
   h2.light Your browser does not support the canvas element. You&rsquo;re missing out! Please go download <a href="http://www.google.com/chrome">Google Chrome</a> and come back =)
-.modal.hide.fade
+.saved-modal.modal.hide.fade
   .modal-header
     a.close(data-dismiss='modal') &times;
     h3 Artifact Saved!
@@ -46,3 +46,12 @@ input#artifact-id(type='hidden', value=locals.artifactId)
     p Your username is:
   .modal-footer
     a.button.button-blue(href='#') I&rsquo;ll remember that!
+
+.new-data-modal.modal.hide.fade
+  .modal-header
+    a.close(data-dismiss='modal') &times;
+    h3 Captured!
+  .modal-body.dark-text
+    p Hey, we&rsquo;ve got your data! Click ok to watch it!
+  .modal-footer
+    a.button.button-blue(href='#') Let&rsquo;s see it!

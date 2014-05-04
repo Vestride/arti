@@ -1,6 +1,7 @@
 var common = require('../common.js'),
     utils = require('../utils.js'),
     redis = common.redis,
+    monitor = common.monitor,
     Artifact = require('../models/Artifact.js'),
     User = require('../models/User.js');
 
@@ -19,21 +20,11 @@ module.exports = function(io) {
         
         // More artifacts requested in gallery
         socket.on('get_more_artifacts', function(data) {
-            var jade = require('jade'),
-                fs = require('fs'),
-                jadeFn,
-                html;
-            
             console.log('emitting event for got_more_artifacts. start: ' + data.start + ', stop: ' + data.stop + ', filter: ' + data.filter);
             Artifact.getArtifacts(data.start, data.stop, data.filter, function(err, artifacts) {
                 if (err) console.log(err);
                 Artifact.getTotalArtifacts(data.filter, function(err, total) {
-                    fs.readFile('views/partials/artifact-grid.jade', function(error, template) {
-                        if (error) console.log(error);
-                        jadeFn = jade.compile(template, {filename: 'views/partials/artifact-grid.jade'});
-                        html = jadeFn({locals : {
-                            artifacts: artifacts
-                        }});
+                    utils.renderJadePartial('views/partials/artifact-grid.jade', {artifacts: artifacts}, function(err, html) {
                         socket.emit('got_more_artifacts', {html: html, total: total});
                         console.log('sending back ' + artifacts.length + ' artifacts.');
                     });
@@ -73,6 +64,22 @@ module.exports = function(io) {
            utils.sendMail(data, function(err, res) {
                socket.emit('test_mail_sent', {response : res});
            });
+        });
+
+
+        // Monitor database events
+        monitor.monitor(function (err, res) {
+            console.log('Now monitoring redis events');
+        });
+
+        monitor.on("monitor", function (time, args) {
+            console.log(args); // ['HSET', 'urn:artifacts:artifact_7452', 'id', 'artifact_7452']
+            // Check to see if the command is an HSET and also that we're setting the 'id' because
+            // there are multiple HSETs per artifact and we only want to do this once.
+            if (args[0] == 'hset' && args[2] == 'id') {
+                console.log('emitting socket event for new data stored');
+                socket.emit('new_data_stored', {id: args[3], args: args});
+            }
         });
     });
 };

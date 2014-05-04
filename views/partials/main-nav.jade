@@ -1,12 +1,12 @@
 ul
     li
         - var active = locals.page == 'gallery' ? ['active'] : [];
-        a(href='/', class=active) The Gallery
+        a(href='/', class=active, data-page='gallery') The Gallery
     li
         - var active = locals.page == 'team' ? ['active'] : [];
-        a(href='/team', class=active) The Team
+        a(href='/team', class=active, data-page='team') The Team
     li
         - var active = locals.page == 'idea' ? ['active'] : [];
-        a(href='/idea', class=active) The Idea
+        a(href='/idea', class=active, data-page='idea') The Idea
     li
-        a(href='http://imposters.cias.rit.edu/the-blog') The Blog
+        a(href='http://imposters.cias.rit.edu/the-blog', data-external) The Blog
